@@ -121,7 +121,7 @@ const dummyPostthree:post= {
     image_url: "https://picsum.photos/536/354"
 }
 
-
+await run()
 async function run(){
     await connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.tnvjw71.mongodb.net/`)
     
