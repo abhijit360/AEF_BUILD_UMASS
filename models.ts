@@ -121,41 +121,30 @@ const dummyPostthree:post= {
     image_url: "https://picsum.photos/536/354"
 }
 
-await run()
+run()
 async function run(){
-    await connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.tnvjw71.mongodb.net/`)
-    
-    const adminInstance = new Admin(adminCredentials);
+    // console.log(process.env.DB_USERNAME, process.env.DB_PASSWORD)
     try{
+        const DB_connection = await connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.tnvjw71.mongodb.net/`)
+        console.log(DB_connection)
+        
+        const adminInstance = new Admin(adminCredentials);
         await adminInstance.save();
         console.log("admin saved successfully")
-    } catch (error) {
-        console.error("Error saving Admin:", error);
-    }   
-
-
-    const postInstanceOne = new Post(dummyPostOne);
-    try{
-        await postInstanceOne.save();
-        console.log("admin saved successfully")
-    } catch (error) {
-        console.error("Error saving Admin:", error)
-    }
     
-    const postInstanceTwo = new Post(dummyPostOne);
-    try{
+        const postInstanceOne = new Post(dummyPostOne);
         await postInstanceOne.save();
         console.log("admin saved successfully")
-    } catch (error) {
-        console.error("Error saving Admin:", error)
-    }
-    
-    const postInstanceThree = new Post(dummyPostOne);
-    try{
+       
+        const postInstanceTwo = new Post(dummyPosttwo);
         await postInstanceOne.save();
         console.log("admin saved successfully")
-    } catch (error) {
-        console.error("Error saving Admin:", error)
-    }
 
+        const postInstanceThree = new Post(dummyPostthree);
+        await postInstanceOne.save();
+        console.log("admin saved successfully")
+    
+    }catch(error){
+        console.error("error:", error)
+    } 
 }
