@@ -1,12 +1,15 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const connectDB = require("./conn")
-
+const cors = require("cors");
 // const postRoutes = require("./routes/postRoutes")
 
 const app = express();
 connectDB()
 const port = 5000;
+
+// to handle CORS
+app.use(cors());
 
 app.use(express.json())
 app.use("/api/post", require("./routes/postRoutes"))
