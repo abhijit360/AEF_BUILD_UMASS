@@ -12,8 +12,8 @@ export default function postByID({params}){
                 const res = await axios.get(`http://localhost:5000/api/post/${params.id}`);
                 const data = await res.data
                 // console.log("data returned")
-                console.log(data);
-                setPostData(data)
+                console.log("post data:",data);
+                setPostData(data[0]) // data returned is a list of one element
             }catch(error){
                 console.error("error:", error)
             }
@@ -21,6 +21,7 @@ export default function postByID({params}){
         getData();
     },[])
 
+   
     return(
         <div>
             {!postData && <p>loading</p>}
