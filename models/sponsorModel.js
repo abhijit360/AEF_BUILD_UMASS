@@ -5,8 +5,8 @@ const sponsorSchema = new Schema({
     name: { type: String, required: true },
     amount: { type: Number },
     logo: { type: String },
-    date_from: { type: Schema.Types.Mixed },
-    date_to: { type: Schema.Types.Mixed }
+    date_from: { type: Date },
+    date_to: { type: Date}
 });
 
 module.exports =  mongoose.model("Sponsor", sponsorSchema);

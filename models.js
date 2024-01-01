@@ -21,7 +21,7 @@ const AdminSchema = new Schema({
 const grantSchema = new Schema({
     title: { type: String, required: true },
     grantee: { type: String, required: true},
-    amount: { type: Schema.Types.Mixed },
+    amount: { type: String },
     schools: [{ type: String, required: true }],
     description: { type: String }
   });
@@ -31,8 +31,8 @@ const sponsorSchema = new Schema({
     name: { type: String, required: true },
     amount: { type: Number },
     logo: { type: String },
-    date_from: { type: Schema.Types.Mixed },
-    date_to: { type: Schema.Types.Mixed }
+    date_from: { type: Date },
+    date_to: { type: Date }
 });
 
 const executiveBoardSchema = new Schema({

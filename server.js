@@ -3,6 +3,10 @@ const mongoose = require("mongoose");
 const connectDB = require("./conn")
 const cors = require("cors");
 // const postRoutes = require("./routes/postRoutes")
+const PostRouter = require("./routes/postRoutes");
+const SponsorRouter = require("./routes/sponsorRoutes");
+const GrantRouter = require("./routes/grantRoutes");
+const EboardRouter = require("./routes/EBoardRoutes");
 
 const app = express();
 connectDB()
@@ -12,7 +16,10 @@ const port = 5000;
 app.use(cors());
 
 app.use(express.json())
-app.use("/api/post", require("./routes/postRoutes"))
+app.use("/api/post", PostRouter)
+app.use("/api/sponsors/", SponsorRouter)
+app.use("/api/grants/", GrantRouter)
+app.use("/api/Eboard/", EboardRouter)
 
 app.get('/api', (req, res) => {
     res.json({

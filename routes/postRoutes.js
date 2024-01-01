@@ -3,10 +3,6 @@ const mongoose = require("mongoose")
 const router = express.Router();
 const Post = require("../models/postModel");
 
-
-
-
-
 router.get("/", async (req,res) =>{
     try{
         const response = await Post.find({});

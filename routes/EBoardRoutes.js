@@ -1,21 +1,23 @@
 const express = require("express");
 const router = express.Router();
+const Eboard = require("../models/EBoardModel")
 
-router.get("/", (req,res) =>{
-    res.status(200).json({message: "get EBoard"})
+router.get("/", async (req,res) =>{
+    const data = await Eboard.find({})
+    res.status(200).json({data:data})
 })
 
-router.get("/:id", (req, res) =>{
-    req.
-    res.status(200).json({message: `get EBoard with id ${req.params.id}`})
+router.put("/", async (req, res) =>{
+    const data = { president, vice_president,treasurer,directors} = req.body
+    const eboard = await Eboard.findOne();
+    eboard.president = president;
+    eboard.vice_president = vice_president;
+    eboard.treasurer = treasurer;
+    eboard.directors = directors;
+    eboard.save();
+    res.status(200).json({data:eboard})
 })
 
-router.put("/:id", (req,res)=>{
-    res.status(200).json({message: `updating EBoard with id: ${req.params.id}`})
-})
 
-router.delete("/:id", (req, res) =>{
-    res.status(200).json({message: `Deleting post with id ${req.params.id}`})
-})
 
 module.exports = router
