@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongoDB = require("mongodb");
 require("dotenv").config();
 const {Schema, connect} = mongoose
 
@@ -117,8 +118,6 @@ async function run(){
         const E_board = mongoose.model("E_board", executiveBoardSchema);
     try{
         const DB_connection = await connect(process.env.DB_CONNECTION_STRING)
-        console.log(DB_connection)
-
         
         const adminInstance = new Admin(adminCredentials);
         await adminInstance.save();
@@ -148,7 +147,10 @@ async function run(){
         await EBInstance.save();
         console.log("EB saved successfully!")
         
-    
+        
+        const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {bucketName:"Images"})
+        console.log("Bucket made")
+
     }catch(error){
         console.error("error:", error)
     } 

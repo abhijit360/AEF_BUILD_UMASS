@@ -7,6 +7,7 @@ const PostRouter = require("./routes/postRoutes");
 const SponsorRouter = require("./routes/sponsorRoutes");
 const GrantRouter = require("./routes/grantRoutes");
 const EboardRouter = require("./routes/EBoardRoutes");
+const uploadRouter = require("./routes/uploadImages");
 
 const app = express();
 connectDB()
@@ -20,6 +21,7 @@ app.use("/api/post", PostRouter)
 app.use("/api/sponsors/", SponsorRouter)
 app.use("/api/grants/", GrantRouter)
 app.use("/api/Eboard/", EboardRouter)
+app.use("/api/upload/", uploadRouter)
 
 app.get('/api', (req, res) => {
     res.json({
