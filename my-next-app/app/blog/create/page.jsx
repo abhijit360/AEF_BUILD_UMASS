@@ -1,7 +1,8 @@
 "use client"
-import MarkdownEditor from "../../components/MarkdownEditor";
 import axios from "axios";
 import {Formik, useFormik} from "formik";
+import { useState } from "react";
+import ReactMarkdown  from "react-markdown"
 
 const validate = values => {
     const errors = {};
@@ -47,9 +48,23 @@ function getDate() {
 
 export default function CreatePostLive(){
 
+    const [imageUrls, setImageUrls] = useState({
+        imageOne: null,
+        imageTwo: null,
+        imageThree: null,
+    });
+
+    const handleImageUpload = (fieldName, event) =>{
+        const selectedFile = event.currentTarget.files[0];
+        if (selectedFile){
+            const imageUrl = URL.createObjectURL(selectedFile);
+            setImageUrls({...imageUrls, [fieldName]: imageUrl});
+            formik.setFieldValue(fieldName, selectedFile);
+        }
+    }
     const formik = useFormik({
         initialValues:{
-            title:"", author:"", date:getDate(), content:""
+            title:"", author:"", date:"", content:"", imageOne:null, imageTwo:null, imageThree:null
         },
         validate,
         onSubmit: async (values) =>{
@@ -61,8 +76,9 @@ export default function CreatePostLive(){
 
     return(
         <div>
+        <div >
             <h1>Create Your Post</h1>
-            <form onSubmit={formik.handleSubmit}>
+            <form style={{display:'flex', flexDirection:"column", gap:"10px"}} onSubmit={formik.handleSubmit}>
                 <label for="title">Title</label>
                 <input
                     id="email"
@@ -83,7 +99,7 @@ export default function CreatePostLive(){
                     onChange={formik.handleChange}
                     value={formik.values.author}
                     />
-                {formik.touched.author && formik.errors.author ? <div>{formik.errors.author}</div> : null}
+                {formik.touched.author && formik.errors.author ? <div >{formik.errors.author}</div> : null}
 
                 <label for="date">Date:</label>
                 <input
@@ -91,14 +107,16 @@ export default function CreatePostLive(){
                     name="data"
                     type="date"
                     onBlur={formik.handleBlur}
-                    onChange={formik.handleChange}
+                    onChange={(event)=>{
+                        formik.setFieldValue("date", event.target.value)
+                    }}
                     value={formik.values.date}
                     />
                 {formik.touched.date && formik.errors.date ? <div>{formik.errors.date}</div> : null}
 
                 
                 <label for="content">Content:</label>
-                <input
+                <textarea
                     id="content"
                     name="content"
                     type="text"
@@ -108,9 +126,79 @@ export default function CreatePostLive(){
                     />
                 {formik.touched.content && formik.errors.content ? <div>{formik.errors.content}</div> : null}
 
+                <label for="imageOne">Upload 1st Image</label>
+                <input
+                    id="imageOne"
+                    name="imageOne"
+                    type="file"
+                    accept="image/*"
+                    onChange={
+                        (event) => handleImageUpload("imageOne",event)
+                    }
+                    />
+                
+                {formik.values["imageOne"] && formik.values["imageOne"] instanceof File && 
+                (<img 
+                    style={{width:"50px", height:"50px",cursor:"grab"}} 
+                    onClick={()=>{ 
+                        const url = URL.createObjectURL(formik.values["imageOne"])
+                        console.log(url)
+                        navigator.clipboard.writeText(url)
+                    }}
+                    src={imageUrls.imageOne} alt="Image One" />)
+                }
+
+                <label for="imageTwo">Upload 2nd Image</label>
+                <input
+                    id="imageTwo"
+                    name="imageTwo"
+                    type="file"
+                    accept="image/*"
+                    onChange={
+                        (event) => handleImageUpload("imageTwo",event)
+                    }
+                    />
+                
+                {formik.values["imageTwo"] && formik.values["imageTwo"] instanceof File && 
+                (<img 
+                    style={{width:"50px", height:"50px" }}
+                    src={imageUrls.imageTwo} alt="Image Two" />)
+                }
+
+                <label for="imageThree">Upload 3rd Image</label>
+                <input
+                    id="imageThree"
+                    name="imageThree"
+                    type="file"
+                    accept="image/*"
+                    onChange={
+                        (event) => handleImageUpload("imageThree",event)
+                    }
+                    />
+                
+                {formik.values["imageThree"] && formik.values["imageThree"] instanceof File && 
+                (<img 
+                    style={{width:"50px", height:"50px" }}
+                    src={imageUrls.imageThree} alt="Image Three"  />)
+                }
+
+
+
         
                 <button type="submit">Submit</button>
             </form>
+
+        </div>
+        <div style={{display: "flex", flexDirection:'column', border: "solid black 0.5px", padding:"1rem", marginTop:"1rem"}}>
+            <p>New Post:</p>
+            {formik.values.title && <h1>{formik.values.title}</h1>}
+            {formik.values.author && <p>{formik.values.author}</p>}
+            {formik.values.date && <p>{formik.values.date}</p>}
+            {formik.values.content &&
+                <ReactMarkdown children={formik.values.content}></ReactMarkdown>
+            }
+
+        </div>
         </div>
     )
 }

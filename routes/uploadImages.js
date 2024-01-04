@@ -1,45 +1,90 @@
 const mongoose = require("mongoose");
 const express = require("express");
 const multer = require("multer");
-const gfsStream = require("gridfs-stream")
+
+require('dotenv').config();
+
+import {createHmac} from "node:crypto"
+import {S3Client,
+    PutObjectCommand,
+    CreateBucketCommand,
+    DeleteObjectCommand,
+    DeleteBucketCommand,
+    paginateListObjectsV2,
+    GetObjectCommand,} from "@aws-sdk/client-s3"
+
+const bucketName= process.env.S3_BUCKET
 
 const router = express.Router()
 // const gfsBucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db,{ bucketName: "Images" });
-
+// stores into memory of the server
 const storage = multer.memoryStorage()
 const uploadImages = multer({storage: storage})
 
-// stores into memory of the server
 
-router.post("/image",uploadImages.single("photo"), (req, res) =>{
-    try{
-        const gfs = new gfsStream.Grid(mongoose.connection, mongoose.mongo);
-        const writeStream = gfs.createWriteStream({
-            filename: req.file.originalname,
-            mode:"w",
-            content_type: req.file.mimetype
-        });
+// // delete an object into an Amazon s3 bucket
+// await s3Client.send(
+//     new DeleteObjectCommand({ Bucket: bucketName, Key: object.Key })
+//   );
 
-        const readStream = require("stream").PassThrough();
-        readStream.end(req.file.buffer);
-        readStream.pipe(writeStream);
+//  // Put an object into an Amazon S3 bucket.
+//  await s3Client.send(
+//     new PutObjectCommand({
+//       Bucket: bucketName,
+//       Key: "my-first-object.txt",
+//       Body: "Hello JavaScript SDK!",
+//     })
+//   );
 
-        writeStream.on("close", (file) =>{
-            //delete the temporary bugget
-            delete req.file.buffer
-            gfs.unlink(req.file.id, (err) => {
-                if (err) throw err;
-                return res.json({file});
-            
+//   // Read the object.
+//   const { Body } = await s3Client.send(
+//     new GetObjectCommand({
+//       Bucket: bucketName,
+//       Key: "my-first-object.txt",
+//     })
+//   );
+
+async function connect(){
+    const s3Client = new S3Client({});
+    return s3Client
+}
+
+S3Client = connect();
+
+router.post("/post", uploadImages.single("image"), async (req, res) =>{
+     // Put an object into an Amazon S3 bucket.
+     const image = req.file.buffer;
+     const hash = createHmac('sha256', image)
+                    .digest('hex');
+        
+     console.log(hash);
+
+    const response = await S3Client.send(
+        new PutObjectCommand({
+          Bucket: bucketName,
+          Key: hash,
+          Body: req.file.buffer,
         })
-    })
-    }catch(err){
-        return res.status(400).json({error: err})
-    }
+      );        
     
-    
+    console.log("response", response)
+    res.status(200).json({location: `api/image/get/${hash}`})
 })
 
+router.get("/get/:imageID", async (req,res) =>{
+    
+    //Put an object into an Amazon S3 bucket.
+    const imageID = req.params.imageID
+    const response = await S3Client.send(
+        new GetObjectCommand({
+            Bucket: bucketName,
+            Key: imageID,
+        })
+    );
+
+    console.log("response", response)
+    // res.sendFile()
+})
 module.exports = router;
 
 

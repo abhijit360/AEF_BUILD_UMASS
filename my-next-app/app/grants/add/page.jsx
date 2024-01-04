@@ -132,7 +132,6 @@ export default function CreatePostLive(){
                 {formik.touched.description && formik.errors.description ? <div>{formik.errors.description}</div> : null}
 
 
-        
                 <button type="submit">Submit</button>
             </form>
         </div>

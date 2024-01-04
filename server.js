@@ -21,7 +21,7 @@ app.use("/api/post", PostRouter)
 app.use("/api/sponsors/", SponsorRouter)
 app.use("/api/grants/", GrantRouter)
 app.use("/api/Eboard/", EboardRouter)
-app.use("/api/upload/", uploadRouter)
+app.use("/api/image/", uploadRouter)
 
 app.get('/api', (req, res) => {
     res.json({
