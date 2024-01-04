@@ -1,12 +1,14 @@
 const mongoose = require("mongoose");
 const {Schema} = mongoose;
 
-const executiveBoardSchema = new Schema({
-    president: { type: String, required: true  },
-    vice_president: { type: String, required: true  },
-    treasurer: { type: String, required: true  },
-    directors: [{ type: String, required: true  }]
-  });
+const sponsorSchema = new Schema({
+  name: { type: String, required: true },
+  amount: { type: Number },
+  logo: { type: String },
+  link: { type: String },
+  date_from: { type: Date },
+  date_to: { type: Date }
+});
 
 module.exports = mongoose.model("E_board", executiveBoardSchema);
 

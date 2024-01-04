@@ -5,13 +5,18 @@ const {Schema, connect} = mongoose
 
 
 const postSchema = new Schema({
-    id: {type: String, required: true},
-    title: {type: String, required: true},
-    content: {type: String, required: true},
-    author: {type: String},
-    date: { type: String , required: true},
-    image_url: { type: String }
-})
+    title: String,
+    subtitle: String,
+    synopsis: String,
+    author: String,
+    authorImgID: String,
+    content: String,
+    contentImgID: String,
+    tags: [String],
+    images: [String],
+    created: { type: Date, default: Date.now },
+    edited: { type: Date, default: Date.now }
+    })
 
 const AdminSchema = new Schema({
     name: {type: String, required: true},
@@ -24,7 +29,8 @@ const grantSchema = new Schema({
     grantee: { type: String, required: true},
     amount: { type: String },
     schools: [{ type: String, required: true }],
-    description: { type: String }
+    description: { type: String },
+    date: { type: Date }
   });
 
   
@@ -32,6 +38,7 @@ const sponsorSchema = new Schema({
     name: { type: String, required: true },
     amount: { type: Number },
     logo: { type: String },
+    link: { type: String },
     date_from: { type: Date },
     date_to: { type: Date }
 });
@@ -51,12 +58,16 @@ const adminCredentials = {
 }
 
 const dummyPostOne = {
-    id: "1",// uuid 
-    title: "This is a dummy title (no Author, No image)",
-    content: "This is dummy content. Test to check my models in mongoDB",
-    // author?: string;
-    date: "24th Dec 2023"
-    // image_url?: string;
+    title: "2022 Family Mini-Gold Fundraiser - A huge Success!",
+    synopsis: "Raised a total of $12,494 at our 3rd annual Family Mini-Golf fundraiser.",
+    author: "John Doe",
+    // authorImgID: String,
+    content: String,
+    contentImgID: String,
+    tags: [String],
+    images: [String],
+    created: { type: Date, default: Date.now },
+    edited: { type: Date, default: Date.now }
 }
 const dummyPosttwo = {
     id: "2",// uuid 
@@ -117,39 +128,39 @@ async function run(){
         const Sponsor = mongoose.model("Sponsor", sponsorSchema);
         const E_board = mongoose.model("E_board", executiveBoardSchema);
     try{
-        const DB_connection = await connect(process.env.DB_CONNECTION_STRING)
+        // const DB_connection = await connect(process.env.DB_CONNECTION_STRING)
         
-        const adminInstance = new Admin(adminCredentials);
-        await adminInstance.save();
-        console.log("admin saved successfully")
+        // const adminInstance = new Admin(adminCredentials);
+        // await adminInstance.save();
+        // console.log("admin saved successfully")
     
-        const postInstanceOne = new Post(dummyPostOne);
-        await postInstanceOne.save();
-        console.log("Post one saved successfully")
+        // const postInstanceOne = new Post(dummyPostOne);
+        // await postInstanceOne.save();
+        // console.log("Post one saved successfully")
        
-        const postInstanceTwo = new Post(dummyPosttwo);
-        await postInstanceTwo.save();
-        console.log("Post Two saved successfully")
+        // const postInstanceTwo = new Post(dummyPosttwo);
+        // await postInstanceTwo.save();
+        // console.log("Post Two saved successfully")
 
-        const postInstanceThree = new Post(dummyPostthree);
-        await postInstanceThree.save();
-        console.log("Post three saved successfully")
+        // const postInstanceThree = new Post(dummyPostthree);
+        // await postInstanceThree.save();
+        // console.log("Post three saved successfully")
 
-        const grantOneInstance = new Grant(GrantOne);
-        await grantOneInstance.save();
-        console.log("Grant one saved successfully")
+        // const grantOneInstance = new Grant(GrantOne);
+        // await grantOneInstance.save();
+        // console.log("Grant one saved successfully")
 
-        const SponsorOneInstance = new Sponsor(sponsorOne);
-        await SponsorOneInstance.save();
-        console.log("Sponsor One saved Successfully")
+        // const SponsorOneInstance = new Sponsor(sponsorOne);
+        // await SponsorOneInstance.save();
+        // console.log("Sponsor One saved Successfully")
         
-        const EBInstance = new E_board(EB);
-        await EBInstance.save();
-        console.log("EB saved successfully!")
+        // const EBInstance = new E_board(EB);
+        // await EBInstance.save();
+        // console.log("EB saved successfully!")
         
         
-        const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {bucketName:"Images"})
-        console.log("Bucket made")
+        // const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {bucketName:"Images"})
+        // console.log("Bucket made")
 
     }catch(error){
         console.error("error:", error)
