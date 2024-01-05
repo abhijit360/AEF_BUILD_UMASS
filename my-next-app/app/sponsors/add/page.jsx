@@ -2,6 +2,7 @@
 import MarkdownEditor from "../../components/MarkdownEditor";
 import axios from "axios";
 import {Formik, useFormik} from "formik";
+import {useState} from "react";
 
 
 
@@ -38,6 +39,36 @@ const validate = values => {
 
 
 export default function CreatePostLive(){
+    const [S3ImageId, setS3ImageId] = useState("")
+    
+    const getAddress = () =>{
+        return `api/images/${S3ImageId}`
+    }
+
+    const deleteImageHandler = async () =>{
+        formik.values["logo-img"] = null; // reset this back to null. (client facing reference)
+        const response = await axios.delete(`http://localhost:5000/api/image/${S3ImageId}`)        
+    }
+
+    const PostImage = async (imageFile) =>{
+        try{
+            var formData = new FormData();
+            formData.append("image", imageFile)
+            
+            const response = await axios.post("http://localhost:5000/api/image/post", formData,{
+                headers:{
+                    "content-Type": 'multipart/form-data'
+                }
+            })
+            console.log("response from submitting data", response)
+            setS3ImageId(response.data.imageId);
+            console.log("imageid",S3ImageId)
+        }catch(error){
+            console.error(error);
+        }
+    }
+
+    
 
     const formik = useFormik({
         initialValues:{
@@ -85,13 +116,24 @@ export default function CreatePostLive(){
                     type="file"
                     accept="image/*"
                     onChange={
-                        (event) => {formik.setFieldValue("logo-img", event.currentTarget.files[0]);}
+                        (event) => {
+                            PostImage(event.currentTarget.files[0]); // post to aws data base directly
+                            formik.setFieldValue("logo-img", event.currentTarget.files[0]);
+                        }
                     }
                     />
                 </>
                 }
                 {formik.values["logo-img"] && formik.values["logo-img"] instanceof File && 
-                (<img src={URL.createObjectURL(formik.values["logo-img"])} alt="Uploaded Logo" />)
+                (<div>
+                    <img src={URL.createObjectURL(formik.values["logo-img"])} alt="Uploaded Logo" />
+                    <div>
+                        <button onClick={(e) =>{
+                            navigator.clipboard.writeText(getAddress())
+                        }}>Copy</button>
+                        <button onClick={deleteImageHandler}>Delete</button>
+                    </div>
+                </div>)
                 }
                 
                 <label for="date_from">Date</label>

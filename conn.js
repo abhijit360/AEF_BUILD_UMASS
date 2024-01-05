@@ -29,6 +29,7 @@ const connectDB = async () =>{
       {useNewUrlParser: true,
       useUnifiedTopology: true})
     console.log(`mongoDB connected : ${conn.connection.host}`);
+    // console.log("data",process.env.S3_BUCKET, process.env.S3_REGION, process.env.AWS_ACCESS_KEY_ID, process.env.AWS_SECRET_ACCESS_KEY)
   } catch(error){
     console.log(error);
     process.exit(1);
