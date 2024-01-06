@@ -45,9 +45,12 @@ export default function CreatePostLive(){
         return `api/images/${S3ImageId}`
     }
 
-    const deleteImageHandler = async () =>{
+    const deleteImageHandler = async (componentID) =>{
+        // clears the input entirely
+        const input = document.getElementById(componentID);
+        input.value = null;
         formik.values["logo-img"] = null; // reset this back to null. (client facing reference)
-        const response = await axios.delete(`http://localhost:5000/api/image/${S3ImageId}`)        
+        const response = await axios.delete(`http://localhost:5000/api/image/${S3ImageId}`)      
     }
 
     const PostImage = async (imageFile) =>{
@@ -55,14 +58,12 @@ export default function CreatePostLive(){
             var formData = new FormData();
             formData.append("image", imageFile)
             
-            const response = await axios.post("http://localhost:5000/api/image/post", formData,{
+            const response = await axios.post("http://localhost:5000/api/image/", formData,{
                 headers:{
                     "content-Type": 'multipart/form-data'
                 }
             })
-            console.log("response from submitting data", response)
-            setS3ImageId(response.data.imageId);
-            console.log("imageid",S3ImageId)
+            setS3ImageId(response.data.imageID);
         }catch(error){
             console.error(error);
         }
@@ -126,12 +127,12 @@ export default function CreatePostLive(){
                 }
                 {formik.values["logo-img"] && formik.values["logo-img"] instanceof File && 
                 (<div>
-                    <img src={URL.createObjectURL(formik.values["logo-img"])} alt="Uploaded Logo" />
+                    <img style={{width:"150px", height:"150px"}} src={URL.createObjectURL(formik.values["logo-img"])} alt="Uploaded Logo" />
                     <div>
-                        <button onClick={(e) =>{
+                        {/* <button onClick={(e) =>{
                             navigator.clipboard.writeText(getAddress())
-                        }}>Copy</button>
-                        <button onClick={deleteImageHandler}>Delete</button>
+                        }}>Copy</button> */}
+                        <button onClick={() => deleteImageHandler("logo-img")}>Delete</button>
                     </div>
                 </div>)
                 }

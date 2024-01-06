@@ -7,7 +7,7 @@ const PostRouter = require("./routes/postRoutes");
 const SponsorRouter = require("./routes/sponsorRoutes");
 const GrantRouter = require("./routes/grantRoutes");
 const EboardRouter = require("./routes/EBoardRoutes");
-const uploadRouter = require("./routes/uploadImages");
+const uploadRouter = require("./routes/uploadImagesRoutes");
 
 const app = express();
 connectDB()

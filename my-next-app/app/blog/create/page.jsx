@@ -53,12 +53,35 @@ export default function CreatePostLive(){
         imageTwo: null,
         imageThree: null,
     });
+    
+    const getAddress = (fieldName) =>{
+        const imageHash = imageUrls[fieldName]
+        return `/api/image/${imageHash}`
+    }
 
-    const handleImageUpload = (fieldName, event) =>{
+    const deleteImageHandler = async (fieldName, event) =>{
+        const input = document.getElementById(fieldName);
+        input.value = null;
+        const imageHash = imageUrls[fieldName] 
+        const response = await axios.delete(`http://localhost:5000/api/image/${imageHash}}`)
+        console.log(response)
+        setImageUrls({...imageUrls, [fieldName]: null});
+        formik.setFieldValue(fieldName, null);
+    }
+
+
+    const handleImageUpload = async (fieldName, event) =>{
         const selectedFile = event.currentTarget.files[0];
         if (selectedFile){
-            const imageUrl = URL.createObjectURL(selectedFile);
-            setImageUrls({...imageUrls, [fieldName]: imageUrl});
+            var formData = new FormData();
+            formData.append("image", selectedFile);
+            const response = await axios.post("http://localhost:5000/api/image/", formData,{
+                headers:{
+                    "content-Type": 'multipart/form-data'
+                }
+            })
+            const imageHash = response.data.imageID
+            setImageUrls({...imageUrls, [fieldName]: imageHash});
             formik.setFieldValue(fieldName, selectedFile);
         }
     }
@@ -68,11 +91,9 @@ export default function CreatePostLive(){
         },
         validate,
         onSubmit: async (values) =>{
-            const res = await axios.post(`http://localhost:5000/api/post/`,
-            values);
-            const data = await res.data
+            console.log("submitting form lol")
         }
-    });
+});
 
     return(
         <div>
@@ -138,14 +159,19 @@ export default function CreatePostLive(){
                     />
                 
                 {formik.values["imageOne"] && formik.values["imageOne"] instanceof File && 
-                (<img 
-                    style={{width:"50px", height:"50px",cursor:"grab"}} 
-                    onClick={()=>{ 
-                        const url = URL.createObjectURL(formik.values["imageOne"])
-                        console.log(url)
-                        navigator.clipboard.writeText(url)
-                    }}
-                    src={imageUrls.imageOne} alt="Image One" />)
+                (<div>
+                    <img 
+                        style={{width:"75px", height:"75px"}} 
+                        src={URL.createObjectURL(formik.values["imageOne"])} 
+                        alt="Image 1" 
+                    />
+                    <div>
+                        <button onClick={(e) =>{
+                            navigator.clipboard.writeText(getAddress("imageOne"))
+                        }}>Copy</button>
+                        <button onClick={() => deleteImageHandler("imageOne")}>Delete</button>
+                    </div>
+                </div>)
                 }
 
                 <label for="imageTwo">Upload 2nd Image</label>
@@ -160,9 +186,19 @@ export default function CreatePostLive(){
                     />
                 
                 {formik.values["imageTwo"] && formik.values["imageTwo"] instanceof File && 
-                (<img 
-                    style={{width:"50px", height:"50px" }}
-                    src={imageUrls.imageTwo} alt="Image Two" />)
+               (<div>
+                <img 
+                    style={{width:"75px", height:"75px"}} 
+                    src={URL.createObjectURL(formik.values["imageTwo"])} 
+                    alt="Image 2 " 
+                />
+                <div>
+                    <button onClick={(e) =>{
+                        navigator.clipboard.writeText(getAddress("imageTwo"))
+                    }}>Copy</button>
+                    <button onClick={() => deleteImageHandler("imageTwo")}>Delete</button>
+                </div>
+            </div>)
                 }
 
                 <label for="imageThree">Upload 3rd Image</label>
@@ -177,9 +213,19 @@ export default function CreatePostLive(){
                     />
                 
                 {formik.values["imageThree"] && formik.values["imageThree"] instanceof File && 
-                (<img 
-                    style={{width:"50px", height:"50px" }}
-                    src={imageUrls.imageThree} alt="Image Three"  />)
+                (<div>
+                    <img 
+                        style={{width:"75px", height:"75px"}} 
+                        src={URL.createObjectURL(formik.values["imageThree"])} 
+                        alt="Image 3" 
+                    />
+                    <div>
+                        <button onClick={(e) =>{
+                            navigator.clipboard.writeText(getAddress("imageThree"))
+                        }}>Copy</button>
+                        <button onClick={() => deleteImageHandler("imageThree")}>Delete</button>
+                    </div>
+                </div>)
                 }
 
 
