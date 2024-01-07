@@ -243,8 +243,10 @@ export default function CreatePostLive(){
             {formik.values.content &&
                 <ReactMarkdown children={formik.values.content}></ReactMarkdown>
             }
+            
 
         </div>
+        <img src="/api/image/acfc7a71128cd0e8d436d64fa661bd506f7eb73e677f6374d729c955cb42f3db" height={300} width={480}/>
         </div>
     )
 }

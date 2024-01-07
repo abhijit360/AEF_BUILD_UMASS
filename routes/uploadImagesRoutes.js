@@ -18,21 +18,23 @@ const uploadImages = multer({storage: storage})
 router.post("/", uploadImages.single("image"), async (req, res) =>{
      // Put an object into an Amazon S3 bucket.
      const image = req.file.buffer;
+     const fileExtension = req.file.originalname.split('.').pop();
      const hash = crypto.createHmac('sha256', image)
                     .digest('hex');
         
      console.log("imagehash:",hash);
      console.log('awsurl:', AWS_URL + `/${hash}`)
+     console.log('extension', fileExtension)
    
     try{
         const response = await axios.put(
             AWS_URL + `/${hash}`,  // url
-            req.file.buffer, //file body
+            req.file, //file body
             {
-                headers: {'Content-type': "multipart/form-data"},
+                headers: {'Content-Type': `image/${fileExtension}`},
             },
         )
-        console.log("response", response)
+        // console.log("response", response)
         res.status(200).json({imageID: `${hash}`})
     }catch(error){
         console.log(error);
@@ -54,11 +56,19 @@ router.delete('/:imageID', async (req,res)=>{
 })
 
 router.get('/:imageID', async (req,res) =>{
+    // res.redirect( AWS_URL + `/${req.params.imageID}`)
     try{
         const response = await axios.get(
-            AWS_URL + `/${req.params.imageID}`
+            AWS_URL + `/${req.params.imageID}`,
+            { responseType: "blob" }
         )
-        res.status(200).json({data: response.data})
+        // console.log(response)
+        console.log(response.headers)
+        res
+        .status(200)
+        .setHeader("Content-Type", response.headers["content-type"])
+        .setHeader("Content-length", response.headers["content-length"])
+        .send(response.data);
     }catch(error){
         res.status(400).json({error:error})
     }
