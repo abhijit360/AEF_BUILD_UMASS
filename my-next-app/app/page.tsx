@@ -1,9 +1,12 @@
-import { Container} from "@mui/material";
-import Navbar from "./components/navbar";
 export default function Home() {
   return (
-      <Container sx={{bgcolor:"#5a86cc", height:"100vh"}}>
-        <Navbar />
-      </Container>
+    <>
+      <div className="h-full px-40 bg-white">
+        <div className="flex flex-row bg-red-200">
+          <h1>Amherst Education Foundation</h1>
+          
+        </div>
+      </div>
+    </>
   );
 }
